@@ -25,15 +25,21 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
-		public virtual List<UserFollow> Following { get; set; }
+		public virtual List<User> Following { get; set; }
 
-		public virtual List<UserFollow> Followers { get; set; }
+		public virtual List<User> Followers { get; set; }
 
 		public virtual List<Post> Posts { get; set; }
 
 		public virtual List<Chat> Chats { get; set; }
 
-		public virtual Image ProfilePic
+        public virtual List<Message> Messages
+        {
+            get; set;
+        }
+
+
+        public virtual Image ProfilePic
 		{
 			get;set;
 		}

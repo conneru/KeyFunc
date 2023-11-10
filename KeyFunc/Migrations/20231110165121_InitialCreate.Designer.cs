@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeyFunc.Migrations
 {
     [DbContext(typeof(KeyFuncContext))]
-    [Migration("20231109233714_InitialCreate")]
+    [Migration("20231110165121_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -61,7 +61,7 @@ namespace KeyFunc.Migrations
                     b.Property<int>("OrderNum")
                         .HasColumnType("int");
 
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .HasColumnType("int");
 
                     b.Property<string>("URL")
@@ -100,7 +100,7 @@ namespace KeyFunc.Migrations
                     b.Property<bool>("Edited")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("PostId")
+                    b.Property<int?>("PostId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -147,8 +147,8 @@ namespace KeyFunc.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateOnly>("JoinedOn")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("JoinedOn")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -163,19 +163,19 @@ namespace KeyFunc.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("KeyFunc.Models.UserFollow", b =>
+            modelBuilder.Entity("UserUser", b =>
                 {
-                    b.Property<int>("FollowerId")
+                    b.Property<int>("FollowersId")
                         .HasColumnType("int");
 
                     b.Property<int>("FollowingId")
                         .HasColumnType("int");
 
-                    b.HasKey("FollowerId", "FollowingId");
+                    b.HasKey("FollowersId", "FollowingId");
 
                     b.HasIndex("FollowingId");
 
-                    b.ToTable("FollowRelations");
+                    b.ToTable("UserFollows", (string)null);
                 });
 
             modelBuilder.Entity("ChatUser", b =>
@@ -220,12 +220,10 @@ namespace KeyFunc.Migrations
 
                     b.HasOne("KeyFunc.Models.Post", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PostId");
 
                     b.HasOne("KeyFunc.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -248,23 +246,19 @@ namespace KeyFunc.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("KeyFunc.Models.UserFollow", b =>
+            modelBuilder.Entity("UserUser", b =>
                 {
-                    b.HasOne("KeyFunc.Models.User", "Follower")
-                        .WithMany("Following")
-                        .HasForeignKey("FollowerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("KeyFunc.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowersId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("KeyFunc.Models.User", "Following")
-                        .WithMany("Followers")
+                    b.HasOne("KeyFunc.Models.User", null)
+                        .WithMany()
                         .HasForeignKey("FollowingId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Follower");
-
-                    b.Navigation("Following");
                 });
 
             modelBuilder.Entity("KeyFunc.Models.Chat", b =>
@@ -281,9 +275,7 @@ namespace KeyFunc.Migrations
 
             modelBuilder.Entity("KeyFunc.Models.User", b =>
                 {
-                    b.Navigation("Followers");
-
-                    b.Navigation("Following");
+                    b.Navigation("Messages");
 
                     b.Navigation("Posts");
 

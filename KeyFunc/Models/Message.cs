@@ -8,6 +8,11 @@ namespace KeyFunc.Models
 			get;
 		}
 
+		public int UserId
+		{
+			get;set;
+		}
+
 		public string Content
 		{
 			get; set;

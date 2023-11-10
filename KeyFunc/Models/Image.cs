@@ -5,7 +5,7 @@ namespace KeyFunc.Models
 	{
 		public int Id;
 
-		public int PostId
+		public int? PostId
 		{
 			get;set;
 		}
