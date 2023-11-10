@@ -20,9 +20,9 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
-		public DateOnly JoinedOn
+		public DateTime JoinedOn
 		{
-			get;
+			get;set;
 		}
 
 		public virtual List<UserFollow> Following { get; set; }
