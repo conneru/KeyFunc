@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using KeyFunc.Repos;
+using KeyFunc.Models;
 
 namespace KeyFunc.Controllers;
 
@@ -11,16 +13,20 @@ public class WeatherForecastController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+    private readonly IUserRepository _userRepository;
+
     private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, IUserRepository userRepository)
     {
         _logger = logger;
+        _userRepository = userRepository;
     }
 
     [HttpGet]
     public IEnumerable<WeatherForecast> Get()
     {
+
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {
             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),

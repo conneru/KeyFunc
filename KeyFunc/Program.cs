@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Headers;
-using Microsoft.AspNetCore.SpaServices.Extensions;
-using Microsoft.AspNetCore.SpaServices;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.Headers;
 using KeyFunc.Data;
-using KeyFunc.Models;
+using KeyFunc.Repos;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +11,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSpaStaticFiles(configuration => {
     configuration.RootPath = "KeyFunc.Client/build";
 });
+builder.Services.AddDbContext<KeyFuncContext>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IChatRepository, ChatRepository>();
+builder.Services.AddTransient<IImageRepository, ImageRespository>();
+builder.Services.AddTransient<IMessageRepository, MessageRepository>();
+builder.Services.AddTransient<IPostRepository, PostRepository>();
+
 
 var app = builder.Build();
 
@@ -72,10 +76,6 @@ else
         });
     });
 }
-
-
-
-var dbContext = new KeyFuncContext();
 
 
 //dbContext.Add(new User { Username = "crust", Email = "nuts@mail.com", Password = "buts", JoinedOn = DateTime.Now });
