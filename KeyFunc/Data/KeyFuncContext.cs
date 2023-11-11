@@ -55,7 +55,7 @@ namespace KeyFunc.Data
                 e.HasMany(e => e.Posts).WithOne(p => p.User).HasForeignKey(p=>p.UserId);
                 e.HasOne(e => e.ProfilePic).WithOne(i => i.User).HasForeignKey<Image>("UserId").IsRequired(false);
                 e.HasMany(e => e.Chats).WithMany(c => c.Users);
-                e.HasMany(e => e.Messages).WithOne(e => e.User).HasForeignKey(e=>e.UserId);
+                e.HasMany(e => e.Messages).WithOne(e => e.User).HasForeignKey(e=>e.UserId).IsRequired(false);
                 e.HasKey(e => e.Id);
             });
 

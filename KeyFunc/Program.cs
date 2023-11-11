@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http.Headers;
 using KeyFunc.Data;
 using KeyFunc.Repos;
+using System.Text.Json.Serialization;
+using KeyFunc.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 builder.Services.AddSpaStaticFiles(configuration => {
     configuration.RootPath = "KeyFunc.Client/build";
@@ -77,60 +83,6 @@ else
     });
 }
 
-
-//dbContext.Add(new User { Username = "crust", Email = "nuts@mail.com", Password = "buts", JoinedOn = DateTime.Now });
-//dbContext.Add(new User { Username = "stuft", Email = "n@mail.com", Password = "buts", JoinedOn = DateTime.Now });
-//dbContext.Add(new User { Username = "butts", Email = "nu@mail.com", Password = "buts", JoinedOn = DateTime.Now });
-
-
-//dbContext.Add(new UserFollow { FollowerId = 1, FollowingId = 2 });
-//dbContext.Add(new UserFollow { FollowerId = 3, FollowingId = 1 });
-
-//var chat = dbContext.Chats.Where(e => e.Id == 1).Single();
-//var user = dbContext.Users.Where(e => e.Id == 1).Include(e=>e.Followers).Include(e=>e.Following).Single();
-
-//user.Following.Add(dbContext.Users.Where(e=>e.Id == 2).Single());
-//user.Followers.Add(dbContext.Users.Where(e => e.Id == 3).Single());
-
-
-
-//dbContext.SaveChanges();
-async void testDb()
-{
-
-    //var chat = await dbContext.Chats.Where(e => e.Id == 1).Include(e => e.Messages).Include(e => e.Users).SingleAsync();
-    //var message = new Message { UserId = 2, Content = "imghstreghsdetrhstrdeh", CreatedAt = DateTime.Now, Edited = false };
-    //var user = await dbContext.Users.Where(e => e.Id == 2).Include(e => e.Chats).SingleAsync();
-
-    //chat.Messages.Add(message);
-
-    //chat.Users.Add(user);
-
-    //user.Chats.Add(chat);
-
-    //dbContext.SaveChanges();
-
-    //foreach (Message m in chat.Messages)
-    //{
-    //    Console.WriteLine($"{m.User.Username}: {m.Content}");
-    //}
-
-    //var user = await dbContext.Users.Where(e => e.Id == 1).Include(e => e.Followers).Include(e => e.Following).FirstAsync();
-
-    //Console.WriteLine("imhere");
-    //foreach (User u in user.Followers)
-    //{
-    //    Console.WriteLine(u.Username);
-    //}
-
-    //Console.WriteLine("Following");
-    //foreach (User u in user.Following)
-    //{
-    //    Console.WriteLine(u.Username);
-    //}
-};
-
-//testDb();
 
 app.Run();
 

@@ -21,6 +21,13 @@ namespace KeyFunc.Repos
 			return entity;
 		}
 
+		public async Task<IEnumerable<TEntity?>> GetAll()
+		{
+			List < TEntity > entities= await _context.Set<TEntity>().ToListAsync();
+
+			return entities.ToArray();
+		}
+
         public void Add(TEntity entity)
 		{
 			_context.Set<TEntity>().Add(entity);

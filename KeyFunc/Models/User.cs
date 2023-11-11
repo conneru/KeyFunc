@@ -3,43 +3,45 @@ namespace KeyFunc.Models
 {
 	public class User
 	{
-		public int Id;
+		public int Id {
+			get; set;
+		}
 
-		public string Username
+		public string? Username
 		{
 			get;set;
 		}
 
-		public string Email
+		public string? Email
 		{
 			get;set;
 		}
 
-		public string Password
+		public string? Password
 		{
 			get;set;
 		}
 
-		public DateTime JoinedOn
+		public DateTime? JoinedOn
 		{
 			get;set;
 		}
 
-		public virtual List<User> Following { get; set; }
+		public virtual List<User>? Following { get; set; }
 
-		public virtual List<User> Followers { get; set; }
+		public virtual List<User>? Followers { get; set; }
 
-		public virtual List<Post> Posts { get; set; }
+		public virtual List<Post>? Posts { get; set; }
 
-		public virtual List<Chat> Chats { get; set; }
+		public virtual List<Chat>? Chats { get; set; }
 
-        public virtual List<Message> Messages
+        public virtual List<Message>? Messages
         {
             get; set;
         }
 
 
-        public virtual Image ProfilePic
+        public virtual Image? ProfilePic
 		{
 			get;set;
 		}

@@ -6,7 +6,7 @@ namespace KeyFunc.Repos
 	{
 		Task<User?> GetUserByEmail(string email);
 
-		Task<User?> GetUserDetails(User user);
+		Task<User?> GetUserDetails(int Id);
 
 
 	}
