@@ -15,7 +15,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddSpaStaticFiles(configuration => {
-    configuration.RootPath = "KeyFunc.Client/build";
+    configuration.RootPath = "AppClient/build";
 });
 builder.Services.AddDbContext<KeyFuncContext>();
 builder.Services.AddTransient<IUserRepository, UserRepository>();
@@ -62,7 +62,7 @@ else
     {
         client.UseSpaStaticFiles();
         client.UseSpa(spa => {
-            spa.Options.SourcePath = "KeyFunc.Client";
+            spa.Options.SourcePath = "AppClient";
 
             // adds no-store header to index page to prevent deployment issues (prevent linking to old .js files)
             // .js and other static resources are still cached by the browser
