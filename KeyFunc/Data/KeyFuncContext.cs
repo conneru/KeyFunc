@@ -50,7 +50,7 @@ namespace KeyFunc.Data
                 e.Property(e => e.Username);
                 e.Property(e => e.Email);
                 e.Property(e => e.Password);
-                e.Property(e => e.JoinedOn);
+                e.Property(e => e.JoinedOn).HasDefaultValue(DateTime.Now);
                 e.HasMany(e => e.Following).WithMany(e=>e.Followers).UsingEntity(e=> e.ToTable("UserFollows"));
                 e.HasMany(e => e.Posts).WithOne(p => p.User).HasForeignKey(p=>p.UserId);
                 e.HasOne(e => e.ProfilePic).WithOne(i => i.User).HasForeignKey<Image>("UserId").IsRequired(false);

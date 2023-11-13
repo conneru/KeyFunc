@@ -11,7 +11,7 @@ namespace KeyFunc.Repos
         void Add(TEntity entity);
 		void AddRange(IEnumerable<TEntity> entities);
 
-		void Update(TEntity entity);
+		void Update(TEntity entity, TEntity updated);
 
         void Delete(TEntity entity);
         void DeleteRange(IEnumerable<TEntity> entities);

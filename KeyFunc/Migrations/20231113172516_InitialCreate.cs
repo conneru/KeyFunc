@@ -35,10 +35,10 @@ namespace KeyFunc.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Username = table.Column<string>(type: "longtext", nullable: false),
-                    Email = table.Column<string>(type: "longtext", nullable: false),
-                    Password = table.Column<string>(type: "longtext", nullable: false),
-                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    Username = table.Column<string>(type: "longtext", nullable: true),
+                    Email = table.Column<string>(type: "longtext", nullable: true),
+                    Password = table.Column<string>(type: "longtext", nullable: true),
+                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true, defaultValue: new DateTime(2023, 11, 13, 12, 25, 16, 883, DateTimeKind.Local).AddTicks(5370))
                 },
                 constraints: table =>
                 {
@@ -176,8 +176,7 @@ namespace KeyFunc.Migrations
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 

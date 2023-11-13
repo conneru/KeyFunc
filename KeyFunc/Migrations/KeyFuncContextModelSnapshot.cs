@@ -141,18 +141,17 @@ namespace KeyFunc.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("JoinedOn")
-                        .HasColumnType("datetime(6)");
+                    b.Property<DateTime?>("JoinedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValue(new DateTime(2023, 11, 13, 12, 25, 16, 883, DateTimeKind.Local).AddTicks(5370));
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -221,9 +220,7 @@ namespace KeyFunc.Migrations
 
                     b.HasOne("KeyFunc.Models.User", "User")
                         .WithMany("Messages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Chat");
 
@@ -276,8 +273,7 @@ namespace KeyFunc.Migrations
 
                     b.Navigation("Posts");
 
-                    b.Navigation("ProfilePic")
-                        .IsRequired();
+                    b.Navigation("ProfilePic");
                 });
 #pragma warning restore 612, 618
         }

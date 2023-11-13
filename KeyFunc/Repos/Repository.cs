@@ -2,6 +2,9 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using KeyFunc.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using KeyFunc.Models;
+
 namespace KeyFunc.Repos
 {
 	public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
@@ -36,11 +39,22 @@ namespace KeyFunc.Repos
         public void AddRange(IEnumerable<TEntity> entities)
 		{
 			_context.Set<TEntity>().AddRange(entities);
-		}
-
-		public void Update(TEntity entity)
+        }
+        public async void Update(TEntity entity, TEntity updated)
 		{
-			_context.Set<TEntity>().Update(entity);
+            var updatedEntity = _context.Set<TEntity>().Entry(updated);
+			var originalEntity = _context.Set<TEntity>().Entry(entity);
+
+            foreach (var property in updatedEntity.OriginalValues.Properties)
+			{
+
+				if (updatedEntity.Property(property.Name).CurrentValue != null && property.Name != "Id") {
+
+					originalEntity.Property(property.Name).CurrentValue = updatedEntity.Property(property.Name).CurrentValue;
+					originalEntity.Property(property.Name).IsModified = true;
+				}
+
+			}
 		}
 
         public void Delete(TEntity entity)

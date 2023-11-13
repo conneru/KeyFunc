@@ -51,7 +51,6 @@ namespace KeyFunc.Controllers
         }
 
         [HttpPost]
-        [Produces("application/json")]
         [Route("follow/{id}")]
         public async Task<User?> FollowUser(int id ,[FromBody] User f)
         {
@@ -67,6 +66,53 @@ namespace KeyFunc.Controllers
             return followee;
 
         }
+
+        [HttpPost]
+        [Route("unfollow/{id}")]
+        public async Task<User?> UnfollowUser(int id, [FromBody] User f)
+        {
+            //Console.WriteLine($"{user.Id} {user.Username}");
+            User? followee = await _userRepository.GetUserDetails(id);
+
+            User? follower = await _userRepository.GetUserDetails(f.Id);
+
+            followee.Followers.Remove(follower);
+
+            _userRepository.Save();
+
+            return follower;
+
+        }
+
+        [HttpPost]
+        public void CreateUser([FromBody] User user)
+        {
+            _userRepository.Add(user);
+            _userRepository.Save();
+
+        }
+
+        [HttpDelete]
+        public void DeleteUser([FromBody]User user)
+        {
+            _userRepository.Delete(user);
+            _userRepository.Save();
+        }
+
+        [HttpPatch]
+        public async Task<User?> UpdateUser([FromBody] User updated)
+        {
+            User? user = await _userRepository.GetById(updated.Id);
+
+            if (user != null)
+            {
+                _userRepository.Update(user, updated);
+                _userRepository.Save();
+            }
+
+            return user;
+        }
+
     }
 }
 
