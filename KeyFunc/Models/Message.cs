@@ -5,8 +5,8 @@ namespace KeyFunc.Models
 	{
 		public int Id
 		{
-			get;
-		}
+			get; set;
+        }
 
 		public int UserId
 		{

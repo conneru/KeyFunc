@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KeyFunc.Migrations
 {
     [DbContext(typeof(KeyFuncContext))]
-    [Migration("20231113172516_InitialCreate")]
+    [Migration("20231114032930_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,7 +44,6 @@ namespace KeyFunc.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
@@ -95,7 +94,9 @@ namespace KeyFunc.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasDefaultValue(new DateTime(2023, 11, 13, 22, 29, 30, 715, DateTimeKind.Local).AddTicks(5510));
 
                     b.Property<bool>("Edited")
                         .HasColumnType("tinyint(1)");
@@ -149,7 +150,7 @@ namespace KeyFunc.Migrations
                     b.Property<DateTime?>("JoinedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 11, 13, 12, 25, 16, 883, DateTimeKind.Local).AddTicks(5370));
+                        .HasDefaultValue(new DateTime(2023, 11, 13, 22, 29, 30, 714, DateTimeKind.Local).AddTicks(6310));
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
@@ -223,7 +224,9 @@ namespace KeyFunc.Migrations
 
                     b.HasOne("KeyFunc.Models.User", "User")
                         .WithMany("Messages")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chat");
 

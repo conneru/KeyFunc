@@ -2,7 +2,7 @@
 using KeyFunc.Models;
 namespace KeyFunc.Repos
 {
-	public interface IMessageRepository
+	public interface IMessageRepository : IRepository<Message>
 	{
 
 	}

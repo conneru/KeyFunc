@@ -9,6 +9,6 @@ namespace KeyFunc.Repos
 		Task<User?> GetUserDetails(int Id);
 
 
-	}
+    }
 }
 

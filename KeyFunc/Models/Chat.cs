@@ -5,19 +5,19 @@ namespace KeyFunc.Models
 	{
 		public int Id
 		{
-			get;
+			get;set;
 		}
 
-		public string Name
+		public string? Name
 		{
 			get;set;
 		}
 
-		public virtual List<Message> Messages {
+		public virtual List<Message>? Messages {
 			get; set;
 		}
 
-        public virtual List<User> Users {
+        public virtual List<User>? Users {
 			get; set;
 		}
 

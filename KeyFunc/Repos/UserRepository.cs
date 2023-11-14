@@ -24,11 +24,10 @@ namespace KeyFunc.Repos
 
         public async Task<User?> GetUserDetails(int Id)
 		{
-            User? foundUser = await _context.Users.Where(u=> u.Id == Id).Include(u => u.Followers).Include(u => u.Following).Include(u=>u.Posts).SingleAsync();
+            User? foundUser = await _context.Users.Where(u=> u.Id == Id).Include(u => u.Followers).Include(u => u.Following).Include(u=>u.Posts).Include(u=>u.Chats).Include(u=>u.Messages).SingleAsync();
 
             return foundUser;
         }
-
 
 
     }

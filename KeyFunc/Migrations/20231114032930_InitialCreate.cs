@@ -21,7 +21,7 @@ namespace KeyFunc.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,7 +38,7 @@ namespace KeyFunc.Migrations
                     Username = table.Column<string>(type: "longtext", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: true),
                     Password = table.Column<string>(type: "longtext", nullable: true),
-                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true, defaultValue: new DateTime(2023, 11, 13, 12, 25, 16, 883, DateTimeKind.Local).AddTicks(5370))
+                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true, defaultValue: new DateTime(2023, 11, 13, 22, 29, 30, 714, DateTimeKind.Local).AddTicks(6310))
                 },
                 constraints: table =>
                 {
@@ -153,7 +153,7 @@ namespace KeyFunc.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "longtext", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2023, 11, 13, 22, 29, 30, 715, DateTimeKind.Local).AddTicks(5510)),
                     Edited = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     ChatId = table.Column<int>(type: "int", nullable: false),
                     PostId = table.Column<int>(type: "int", nullable: true)
@@ -176,7 +176,8 @@ namespace KeyFunc.Migrations
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 

@@ -8,15 +8,15 @@ namespace KeyFunc.Repos
 		Task<IEnumerable<TEntity?>> GetAll();
 
 
-        void Add(TEntity entity);
+        TEntity Add(TEntity entity);
 		void AddRange(IEnumerable<TEntity> entities);
 
-		void Update(TEntity entity, TEntity updated);
+        Task<TEntity> Update(int id, TEntity entity);
 
         void Delete(TEntity entity);
         void DeleteRange(IEnumerable<TEntity> entities);
 
-		void Save();
+		Task<int> Save();
 
 	}
 }

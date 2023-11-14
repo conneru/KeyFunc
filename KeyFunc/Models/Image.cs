@@ -3,7 +3,10 @@ namespace KeyFunc.Models
 {
 	public class Image
 	{
-		public int Id;
+		public int Id
+		{
+			get;set;
+		}
 
 		public int? PostId
 		{

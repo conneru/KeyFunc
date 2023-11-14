@@ -31,30 +31,38 @@ namespace KeyFunc.Repos
 			return entities.ToArray();
 		}
 
-        public void Add(TEntity entity)
+        public TEntity Add(TEntity entity)
 		{
 			_context.Set<TEntity>().Add(entity);
+
+			return entity;
 		}
 
         public void AddRange(IEnumerable<TEntity> entities)
 		{
 			_context.Set<TEntity>().AddRange(entities);
         }
-        public async void Update(TEntity entity, TEntity updated)
-		{
-            var updatedEntity = _context.Set<TEntity>().Entry(updated);
-			var originalEntity = _context.Set<TEntity>().Entry(entity);
 
-            foreach (var property in updatedEntity.OriginalValues.Properties)
+        public async Task<TEntity> Update(int id, TEntity entity)
+		{
+
+			var findOriginal = await _context.Set<TEntity>().FindAsync(id);
+			var originalEntity = _context.Set<TEntity>().Entry(findOriginal);
+            var updatedEntity = _context.Set<TEntity>().Entry(entity);
+
+			foreach (var property in updatedEntity.OriginalValues.Properties)
 			{
 
-				if (updatedEntity.Property(property.Name).CurrentValue != null && property.Name != "Id") {
-
+				if (updatedEntity.Property(property.Name).CurrentValue != null && property.Name != "Id")
+				{
+					Console.WriteLine(property.Name);
 					originalEntity.Property(property.Name).CurrentValue = updatedEntity.Property(property.Name).CurrentValue;
 					originalEntity.Property(property.Name).IsModified = true;
 				}
 
 			}
+
+			return entity;
 		}
 
         public void Delete(TEntity entity)
@@ -68,9 +76,11 @@ namespace KeyFunc.Repos
 		}
 
 
-        public void Save()
+        public async Task<int> Save()
 		{
-			_context.SaveChanges();
+			await _context.SaveChangesAsync();
+
+			return 200;
 		}
 
 

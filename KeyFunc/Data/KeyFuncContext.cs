@@ -55,7 +55,7 @@ namespace KeyFunc.Data
                 e.HasMany(e => e.Posts).WithOne(p => p.User).HasForeignKey(p=>p.UserId);
                 e.HasOne(e => e.ProfilePic).WithOne(i => i.User).HasForeignKey<Image>("UserId").IsRequired(false);
                 e.HasMany(e => e.Chats).WithMany(c => c.Users);
-                e.HasMany(e => e.Messages).WithOne(e => e.User).HasForeignKey(e=>e.UserId).IsRequired(false);
+                e.HasMany(e => e.Messages).WithOne(e => e.User).HasForeignKey(e=>e.UserId);
                 e.HasKey(e => e.Id);
             });
 
@@ -88,7 +88,7 @@ namespace KeyFunc.Data
             {
                 e.Property(e => e.Id).ValueGeneratedOnAdd();
                 e.Property(e => e.Content);
-                e.Property(e => e.CreatedAt);
+                e.Property(e => e.CreatedAt).HasDefaultValue(DateTime.Now);
                 e.Property(e => e.Edited);
                 e.Property(e => e.UserId);
             });
