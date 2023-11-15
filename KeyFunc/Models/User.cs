@@ -27,6 +27,11 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
+		public string? ProfilePic
+		{
+			get;set;
+		}
+
 		public virtual List<User>? Following { get; set; }
 
 		public virtual List<User>? Followers { get; set; }
@@ -39,12 +44,6 @@ namespace KeyFunc.Models
         {
             get; set;
         }
-
-
-        public virtual Image? ProfilePic
-		{
-			get;set;
-		}
 	}
 }
 

@@ -13,7 +13,7 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
-		public int OrderNum
+		public int? OrderNum
 		{
 			get;set;
 		}
@@ -24,12 +24,7 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
-		public virtual User User
-		{
-			get;set;
-		}
-
-		public virtual Post Post
+		public virtual Post? Post
 		{
 			get;set;
 		}

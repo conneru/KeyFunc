@@ -13,7 +13,17 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
-		public string Content
+        public int? PostId
+        {
+            get; set;
+        }
+
+        public int? ChatId
+        {
+            get; set;
+        }
+
+        public string Content
 		{
 			get; set;
 		}
@@ -23,22 +33,22 @@ namespace KeyFunc.Models
 			get; set;
 		}
 
-		public bool Edited
+		public bool? Edited
 		{
 			get; set;
 		}
 
-		public virtual Chat Chat
+		public virtual Chat? Chat
 		{
 			get; set;
 		}
 
-		public virtual User User
+		public virtual User? User
 		{
 			get;set;
 		}
 
-		public virtual Post Post
+		public virtual Post? Post
 		{
 			get;set;
 		}

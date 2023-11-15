@@ -23,10 +23,12 @@ namespace KeyFunc.Controllers
 
 
         [HttpPost]
-        public void AddMessage(int id, [FromBody] Message message)
+        public async Task<StatusCodeResult> AddMessage([FromBody] Message message)
         {
             _messageRepository.Add(message);
-            _messageRepository.Save();
+            await _messageRepository.Save();
+
+            return StatusCode(200);
         }
 
         [HttpPatch]

@@ -8,27 +8,27 @@ namespace KeyFunc.Models
 			get;set;
         }
 
-		public int UserId
+		public int? UserId
 		{
 			get;set;
 		}
 
-		public string Description
+		public string? Description
 		{
 			get;set;
 		}
 
-		public virtual List<Message> Comments
+		public virtual List<Message>? Comments
 		{
 			get;set;
 		}
 
-		public virtual List<Image> Images
+		public virtual List<Image>? Images
 		{
 			get;set;
 		}
 
-		public virtual User User
+		public virtual User? User
 		{
 			get;set;
 		}

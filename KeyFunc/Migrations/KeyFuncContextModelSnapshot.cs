@@ -54,7 +54,7 @@ namespace KeyFunc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("OrderNum")
+                    b.Property<int?>("OrderNum")
                         .HasColumnType("int");
 
                     b.Property<int?>("PostId")
@@ -64,15 +64,9 @@ namespace KeyFunc.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Images");
                 });
@@ -83,7 +77,7 @@ namespace KeyFunc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("ChatId")
+                    b.Property<int?>("ChatId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -93,9 +87,9 @@ namespace KeyFunc.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 11, 13, 22, 29, 30, 715, DateTimeKind.Local).AddTicks(5510));
+                        .HasDefaultValue(new DateTime(2023, 11, 14, 12, 34, 13, 497, DateTimeKind.Local).AddTicks(4790));
 
-                    b.Property<bool>("Edited")
+                    b.Property<bool?>("Edited")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<int?>("PostId")
@@ -122,10 +116,9 @@ namespace KeyFunc.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -147,9 +140,12 @@ namespace KeyFunc.Migrations
                     b.Property<DateTime?>("JoinedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 11, 13, 22, 29, 30, 714, DateTimeKind.Local).AddTicks(6310));
+                        .HasDefaultValue(new DateTime(2023, 11, 14, 12, 34, 13, 497, DateTimeKind.Local).AddTicks(560));
 
                     b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProfilePic")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
@@ -195,29 +191,21 @@ namespace KeyFunc.Migrations
                     b.HasOne("KeyFunc.Models.Post", "Post")
                         .WithMany("Images")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("KeyFunc.Models.User", "User")
-                        .WithOne("ProfilePic")
-                        .HasForeignKey("KeyFunc.Models.Image", "UserId");
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KeyFunc.Models.Message", b =>
                 {
                     b.HasOne("KeyFunc.Models.Chat", "Chat")
                         .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChatId");
 
                     b.HasOne("KeyFunc.Models.Post", "Post")
                         .WithMany("Comments")
-                        .HasForeignKey("PostId");
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("KeyFunc.Models.User", "User")
                         .WithMany("Messages")
@@ -236,9 +224,7 @@ namespace KeyFunc.Migrations
                 {
                     b.HasOne("KeyFunc.Models.User", "User")
                         .WithMany("Posts")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -275,8 +261,6 @@ namespace KeyFunc.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("ProfilePic");
                 });
 #pragma warning restore 612, 618
         }

@@ -38,7 +38,8 @@ namespace KeyFunc.Migrations
                     Username = table.Column<string>(type: "longtext", nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: true),
                     Password = table.Column<string>(type: "longtext", nullable: true),
-                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true, defaultValue: new DateTime(2023, 11, 13, 22, 29, 30, 714, DateTimeKind.Local).AddTicks(6310))
+                    JoinedOn = table.Column<DateTime>(type: "datetime(6)", nullable: true, defaultValue: new DateTime(2023, 11, 14, 12, 34, 13, 497, DateTimeKind.Local).AddTicks(560)),
+                    ProfilePic = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,8 +78,8 @@ namespace KeyFunc.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,8 +88,7 @@ namespace KeyFunc.Migrations
                         name: "FK_Posts_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -124,9 +124,8 @@ namespace KeyFunc.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     PostId = table.Column<int>(type: "int", nullable: true),
-                    OrderNum = table.Column<int>(type: "int", nullable: false),
-                    URL = table.Column<string>(type: "longtext", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    OrderNum = table.Column<int>(type: "int", nullable: true),
+                    URL = table.Column<string>(type: "longtext", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,11 +136,6 @@ namespace KeyFunc.Migrations
                         principalTable: "Posts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Images_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -152,11 +146,11 @@ namespace KeyFunc.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    PostId = table.Column<int>(type: "int", nullable: true),
+                    ChatId = table.Column<int>(type: "int", nullable: true),
                     Content = table.Column<string>(type: "longtext", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2023, 11, 13, 22, 29, 30, 715, DateTimeKind.Local).AddTicks(5510)),
-                    Edited = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    ChatId = table.Column<int>(type: "int", nullable: false),
-                    PostId = table.Column<int>(type: "int", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValue: new DateTime(2023, 11, 14, 12, 34, 13, 497, DateTimeKind.Local).AddTicks(4790)),
+                    Edited = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,13 +159,13 @@ namespace KeyFunc.Migrations
                         name: "FK_Messages_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Messages_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
@@ -190,12 +184,6 @@ namespace KeyFunc.Migrations
                 name: "IX_Images_PostId",
                 table: "Images",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Images_UserId",
-                table: "Images",
-                column: "UserId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ChatId",
