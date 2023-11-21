@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using KeyFunc.Repos;
 using KeyFunc.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace KeyFunc.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ChatController : ControllerBase

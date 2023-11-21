@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using KeyFunc.Models;
 using KeyFunc.Repos;
 using System.Text.Json;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Org.BouncyCastle.Asn1.Pkcs;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=
 //
@@ -33,7 +37,10 @@ namespace KeyFunc.Controllers
         [HttpPost]
         public async Task<User> CreateUser([FromBody] User user)
         {
-            _userRepository.Add(user);
+            PasswordHasher<User> hasher = new();
+
+            User newUser = _userRepository.Add(user);
+            newUser.Password = hasher.HashPassword(newUser, newUser.Password);
             await _userRepository.Save();
 
             return user;
