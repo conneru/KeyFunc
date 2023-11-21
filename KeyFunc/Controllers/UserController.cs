@@ -30,6 +30,33 @@ namespace KeyFunc.Controllers
             _userRepository = userRepository;
         }
 
+        [HttpPost]
+        public async Task<User> CreateUser([FromBody] User user)
+        {
+            _userRepository.Add(user);
+            await _userRepository.Save();
+
+            return user;
+
+        }
+
+        [HttpPut]
+        public async Task<User> UpdateUser([FromBody] User user)
+        {
+           User newUser = await _userRepository.Update(user.Id, user);
+           await _userRepository.Save();
+
+            return newUser;
+        }
+
+        [HttpDelete]
+        public void DeleteUser([FromBody] User user)
+        {
+            Console.WriteLine("hit");
+            _userRepository.Delete(user);
+            _userRepository.Save();
+        }
+
         [HttpGet]
         [Route("all")]
         public async Task<IEnumerable<User>> GetAllUsers()
@@ -45,6 +72,8 @@ namespace KeyFunc.Controllers
         [Route("{Id}")]
         public async Task<User?> GetSingleUser(int Id)
         {
+
+            Console.WriteLine("Hit the route!");
             User? user = await _userRepository.GetUserDetails(Id);
 
             return user;
@@ -84,31 +113,6 @@ namespace KeyFunc.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<User> CreateUser([FromBody] User user)
-        {
-            _userRepository.Add(user);
-            await _userRepository.Save();
-
-            return user;
-
-        }
-
-        [HttpDelete]
-        public void DeleteUser([FromBody] User user)
-        {
-            _userRepository.Delete(user);
-            _userRepository.Save();
-        }
-
-        [HttpPatch]
-        public async Task<User> UpdateUser([FromBody] User updated)
-        {
-           User newUser = await _userRepository.Update(updated.Id, updated);
-           await _userRepository.Save();
-
-            return newUser;
-        }
 
 
         [HttpDelete]

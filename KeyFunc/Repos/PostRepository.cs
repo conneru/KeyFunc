@@ -30,7 +30,7 @@ namespace KeyFunc.Repos
 		public async Task<IEnumerable<Post>?> GetFollowingPosts(User user)
 		{
 			User u = await _context.Users.Where(u => u.Id == user.Id).SingleAsync();
-			List<Post>? followerPosts = await _context.Posts.Where(p => p.User.Followers.Contains(u)).ToListAsync();
+			List<Post>? followerPosts = await _context.Posts.Where(p => p.User.Followers.Contains(u)).Include(p=>p.User).Include(p=>p.Images).Include(p=>p.Comments).ToListAsync();
 
 			return followerPosts;
 		}

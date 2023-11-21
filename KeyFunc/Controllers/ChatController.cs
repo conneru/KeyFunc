@@ -59,7 +59,7 @@ namespace KeyFunc.Controllers
             _chatRepository.Save();
         }
 
-        [HttpPatch]
+        [HttpPut]
         public async Task<Chat> UpdateChat([FromBody] Chat chat)
         {
 

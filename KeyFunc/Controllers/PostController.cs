@@ -55,7 +55,7 @@ namespace KeyFunc.Controllers
 
         [HttpPost]
         [Route("feed")]
-        public async Task<IEnumerable<Post>> GetFollowerPosts([FromBody] User user)
+        public async Task<IEnumerable<Post>> GetFollowingPosts([FromBody] User user)
         {
             IEnumerable<Post> followerPosts = await _postRepository.GetFollowingPosts(user);
 

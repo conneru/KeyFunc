@@ -5,13 +5,23 @@ using System.Text.Json.Serialization;
 using KeyFunc.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:44478")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
 });
 
 builder.Services.AddSpaStaticFiles(configuration => {
@@ -35,10 +45,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 
 app.MapControllerRoute(
     name: "default",
