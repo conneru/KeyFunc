@@ -38,10 +38,10 @@ export interface User {
 }
 
 export interface NewUser {
-  username: string;
+  username?: string;
   email: string;
   password: string;
-  confirmPass: string;
+  confirmPass?: string;
 }
 
 export interface Post {

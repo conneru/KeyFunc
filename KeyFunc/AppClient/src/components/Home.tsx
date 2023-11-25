@@ -2,16 +2,16 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { getFollowingPosts } from "../features/postSlice";
 import { Post } from "../types";
+import { logOut } from "../features/authSlice";
 
 export default function Home() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(getFollowingPosts({ id: 13 }));
-  }, [dispatch]);
+  }, []);
 
   const posts: Post[] | null = useAppSelector((state) => {
-    console.log(state.post);
     return state.post.Posts;
   });
   const isLoading: boolean = useAppSelector((state) => state.post.isLoading);
@@ -21,10 +21,11 @@ export default function Home() {
 
   return (
     <div>
+      <button onClick={() => dispatch(logOut())}>Log out</button>
       <>
         {posts?.map((post) => {
           return (
-            <div>
+            <div key={post.id}>
               <div>{post.user?.username}</div>
               <img
                 src={post.images?.[0].url}
@@ -35,7 +36,7 @@ export default function Home() {
               <div>Comments:</div>
               {post.comments?.map((comment) => {
                 return (
-                  <div>
+                  <div key={comment.id}>
                     <div>
                       {comment.user?.username}: {comment.content}
                     </div>

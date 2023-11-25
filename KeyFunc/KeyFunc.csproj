@@ -26,6 +26,7 @@
     </PackageReference>
     <PackageReference Include="MySql.Data" Version="8.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.13" />
   </ItemGroup>
 
   <ItemGroup>

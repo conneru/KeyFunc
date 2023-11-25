@@ -13,21 +13,31 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 
-builder.Services.AddAuthentication(x => {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(x => {
-    x.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(x =>
     {
-        ValidIssuer = config["JwtSettings:Issuer"],
-        ValidAudience = config["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)),
-        ValidateIssuer =true,
-        ValidateAudience = true,
-        ValidateIssuerSigningKey = true
-    };
-});
+        x.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Token = context.Request.Cookies["X-Access-Token"];
+                return Task.CompletedTask;
+            }
+        };
+
+        x.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = config["JwtSettings:Issuer"],
+            ValidAudience = config["JwtSettings:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtSettings:Key"]!)),
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+    });
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -43,7 +53,8 @@ builder.Services.AddCors(options =>
                       {
                           policy.WithOrigins("https://localhost:44478")
                           .AllowAnyHeader()
-                          .AllowAnyMethod();
+                          .AllowAnyMethod()
+                          .AllowCredentials();
                       });
 });
 
@@ -121,4 +132,3 @@ app.MapControllerRoute(
 
 
 app.Run();
-

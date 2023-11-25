@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using KeyFunc.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -52,6 +54,8 @@ namespace KeyFunc.Data
                 e.Property(e => e.Password);
                 e.Property(e => e.JoinedOn).HasDefaultValue(DateTime.Now);
                 e.Property(e => e.ProfilePic).IsRequired(false);
+                e.Property(e => e.RefreshToken).IsRequired(false);
+                e.Property(e => e.RefreshTokenExp).IsRequired(false);
                 e.HasMany(e => e.Following).WithMany(e=>e.Followers).UsingEntity(e=> e.ToTable("UserFollows"));
                 e.HasMany(e => e.Posts).WithOne(p => p.User).HasForeignKey(p=>p.UserId);
                 e.HasMany(e => e.Chats).WithMany(c => c.Users);

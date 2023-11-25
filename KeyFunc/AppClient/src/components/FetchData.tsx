@@ -18,10 +18,12 @@ function FetchData() {
     //   .then((r) => setData(r));
   }, [dispatch]);
 
-  const user: User | null = useAppSelector((state) => state.user.User);
+  const user: User | null = useAppSelector((state) => state.persist.User);
   console.log(user);
-  const isLoading: boolean = useAppSelector((state) => state.user.isLoading);
-  const error: string | undefined = useAppSelector((state) => state.user.error);
+  const isLoading: boolean = useAppSelector((state) => state.persist.isLoading);
+  const error: string | undefined = useAppSelector(
+    (state) => state.persist.error
+  );
 
   return (
     <div>

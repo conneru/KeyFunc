@@ -22,6 +22,7 @@ export const fetchSingleChat = createAsyncThunk(
     const res = await axios({
       method: "get",
       url: `api/chat/${id}`,
+      withCredentials: true,
     });
 
     const chat: Chat = await res.data;

@@ -32,7 +32,9 @@ export const fetchSinglePost = createAsyncThunk(
 export const getFollowingPosts = createAsyncThunk(
   "post/getFollowingPosts",
   async (user: User) => {
-    const res = await axios.post("api/post/feed", user);
+    const res = await axios.post("api/post/feed", user, {
+      withCredentials: true,
+    });
 
     const posts: Post[] = await res.data;
 
