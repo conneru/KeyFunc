@@ -18,6 +18,16 @@ namespace KeyFunc.Models
 			get;set;
 		}
 
+		public int? Likes
+		{
+			get;set;
+		}
+
+		public DateTime createdAt
+		{
+			get;set;
+		}
+
 		public virtual List<Message>? Comments
 		{
 			get;set;

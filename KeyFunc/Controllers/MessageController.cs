@@ -25,6 +25,7 @@ namespace KeyFunc.Controllers
         [HttpPost]
         public async Task<StatusCodeResult> AddMessage([FromBody] Message message)
         {
+            message.CreatedAt = DateTime.Now;
             _messageRepository.Add(message);
             await _messageRepository.Save();
 

@@ -28,11 +28,11 @@ namespace KeyFunc.Controllers
         }
 
 
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<Chat> GetChat(int id)
+        [HttpPost]
+        [Route("all")]
+        public async Task<IEnumerable<Chat>?> GetChat([FromBody]User user)
         {
-           Chat chat = await _chatRepository.GetChatDetails(id);
+           IEnumerable<Chat>? chat = await _chatRepository.GetChats(user);
 
             return chat;
         }

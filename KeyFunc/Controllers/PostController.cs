@@ -28,15 +28,25 @@ namespace KeyFunc.Controllers
         [Route("{id}")]
         public async Task<Post> GetPost(int id)
         {
-            Post post = await _postRepository.GetPostDetails(id);
+            try
+            {
+                Post post = await _postRepository.GetPostDetails(id);
 
-            return post;
+                return post;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return null;
         }
 
 
         [HttpPost]
         public async Task<Post> CreatePost([FromBody] Post post)
         {
+            post.createdAt = DateTime.Now;
             _postRepository.Add(post);
             await _postRepository.Save();
 
@@ -57,11 +67,22 @@ namespace KeyFunc.Controllers
 
         [HttpPost]
         [Route("feed")]
-        public async Task<IEnumerable<Post>> GetFollowingPosts([FromBody] User user)
+        public async Task<Object> GetFollowingPosts([FromBody] User user)
         {
-            IEnumerable<Post> followerPosts = await _postRepository.GetFollowingPosts(user);
+            try
+            {
+                IEnumerable<Post> followerPosts = await _postRepository.GetFollowingPosts(user);
 
-            return followerPosts;
+                Console.WriteLine("its asll good!");
+                return followerPosts;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return e.Message;
+            }
+
+            return null;
         }
 
 

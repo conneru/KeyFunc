@@ -41,6 +41,7 @@ namespace KeyFunc.Controllers
 
             User newUser = _userRepository.Add(user);
             newUser.Password = hasher.HashPassword(newUser, newUser.Password);
+            newUser.JoinedOn = DateTime.Now;
             await _userRepository.Save();
 
             return user;

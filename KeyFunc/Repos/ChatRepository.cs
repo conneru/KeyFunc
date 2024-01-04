@@ -13,13 +13,22 @@ namespace KeyFunc.Repos
 			_context = context;
 		}
 
-		public async Task<Chat?> GetChatDetails(int Id)
+		public async Task<IEnumerable<Chat>?> GetChats(User user)
 		{
-			Chat? chat = await _context.Chats.Where(c => c.Id == Id).Include(c => c.Messages).Include(c => c.Users).SingleAsync();
+            List<Chat>? chats = await _context.Chats.Where(c => c.Users.Contains(user)).Include(c => c.Users).Include(c => c.Messages.OrderBy(m => m.CreatedAt)).ToListAsync();
 
-
-			return chat;
+		
+            return chats;
 		}
-	}
+
+        public async Task<Chat?> GetChatDetails(int Id)
+        {
+			Chat? chat = await _context.Chats.Where(c => c.Id == Id).Include(c => c.Messages.OrderBy(m => m.CreatedAt)).Include(c => c.Users).SingleAsync();
+
+
+
+            return chat;
+        }
+    }
 }
 

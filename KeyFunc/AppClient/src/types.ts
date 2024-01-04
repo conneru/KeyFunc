@@ -20,7 +20,7 @@ export interface Message {
   postId?: number | null;
   chatId?: number | null;
   content?: string | null;
-  createAt?: Date | null;
+  createdAt?: string;
   edited?: boolean | null;
   chat?: Chat | null;
   user?: User | null;
@@ -35,6 +35,7 @@ export interface User {
   profilePic?: string | null;
   following?: User[] | null;
   followers?: User[] | null;
+  chats?: Chat[] | null;
 }
 
 export interface NewUser {
@@ -49,6 +50,12 @@ export interface Post {
   userId?: number | null;
   description?: string | null;
   comments?: Message[] | null;
-  images?: Image[] | null;
+  images: Image[];
   user?: User | null;
+  createdAt: string;
+}
+
+export interface Connect {
+  events: Function;
+  newMessage: Function;
 }

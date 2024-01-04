@@ -3,17 +3,21 @@ using KeyFunc.Data;
 using KeyFunc.Repos;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using KeyFunc.Models;
+using KeyFunc.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var config = builder.Configuration;
 
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(x =>
     {
         x.Events = new JwtBearerEvents
@@ -45,6 +49,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
@@ -57,6 +62,7 @@ builder.Services.AddCors(options =>
                           .AllowCredentials();
                       });
 });
+
 
 builder.Services.AddSpaStaticFiles(configuration => {
     configuration.RootPath = "AppClient/build";
@@ -120,6 +126,7 @@ else
 
 
 app.UseCors("CorsPolicy");
+app.UseWebSockets();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
@@ -130,5 +137,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
+app.MapHub<ChatHub>("/hub");
 
 app.Run();

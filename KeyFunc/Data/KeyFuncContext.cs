@@ -52,7 +52,7 @@ namespace KeyFunc.Data
                 e.Property(e => e.Username);
                 e.Property(e => e.Email);
                 e.Property(e => e.Password);
-                e.Property(e => e.JoinedOn).HasDefaultValue(DateTime.Now);
+                e.Property(e => e.JoinedOn);
                 e.Property(e => e.ProfilePic).IsRequired(false);
                 e.Property(e => e.RefreshToken).IsRequired(false);
                 e.Property(e => e.RefreshTokenExp).IsRequired(false);
@@ -85,6 +85,8 @@ namespace KeyFunc.Data
             {
                 e.Property(e => e.Id).ValueGeneratedOnAdd();
                 e.Property(e => e.Description);
+                e.Property(e => e.Likes);
+                e.Property(e => e.createdAt);
                 e.HasMany(e => e.Comments).WithOne(e => e.Post).HasForeignKey(e=>e.PostId).IsRequired(false).OnDelete(DeleteBehavior.Cascade);
                 e.HasMany(e => e.Images).WithOne(e => e.Post).HasForeignKey(e=>e.PostId).OnDelete(DeleteBehavior.Cascade);
             });
@@ -93,7 +95,7 @@ namespace KeyFunc.Data
             {
                 e.Property(e => e.Id).ValueGeneratedOnAdd();
                 e.Property(e => e.Content);
-                e.Property(e => e.CreatedAt).HasDefaultValue(DateTime.Now);
+                e.Property(e => e.CreatedAt);
                 e.Property(e => e.Edited);
                 e.Property(e => e.UserId);
             });

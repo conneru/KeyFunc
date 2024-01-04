@@ -41,7 +41,7 @@ namespace KeyFunc.Controllers
 
 
             foundUser.RefreshToken = Convert.ToString( Guid.NewGuid());
-            foundUser.RefreshTokenExp = DateTime.Now.AddMinutes(5);
+            foundUser.RefreshTokenExp = DateTime.Now.AddDays(7);
 
             User updatedUser = await _userRepository.Update(foundUser.Id, foundUser);
             await _userRepository.Save();
@@ -75,6 +75,7 @@ namespace KeyFunc.Controllers
             string refreshToken = Request.Cookies["X-Refresh-Token"];
 
             var tokenInfo = GetPrincipalFromExpiredToken(accessToken);
+
             string email = tokenInfo.FindFirst("Name").Value;
 
             User user = await _userRepository.GetUserByEmail(email);
@@ -122,8 +123,10 @@ namespace KeyFunc.Controllers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
-        new Claim(JwtRegisteredClaimNames.Name, userInfo.Email),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
+                new Claim(JwtRegisteredClaimNames.Name, userInfo.Email),
+
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
             var token = new JwtSecurityToken(_config["JwtSettings:Issuer"],

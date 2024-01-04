@@ -5,7 +5,9 @@ namespace KeyFunc.Repos
 {
 	public interface IChatRepository : IRepository<Chat>
 	{
-		Task<Chat?> GetChatDetails(int Id);
-	}
+		Task<IEnumerable<Chat>?> GetChats(User user);
+        Task<Chat?> GetChatDetails(int Id);
+
+    }
 }
 

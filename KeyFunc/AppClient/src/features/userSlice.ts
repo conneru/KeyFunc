@@ -1,23 +1,20 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import axios, { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "axios";
+import { axiosInstance as axios } from "../axiosInstance";
 import { NewUser, User } from "../types";
 
 interface UserState {
-  User: User | null;
-  isLoading: boolean;
-  error: string | undefined;
+  isAuthorized: boolean;
 }
 
 const initialState: UserState = {
-  User: null,
-  isLoading: false,
-  error: undefined,
+  isAuthorized: false,
 };
 
 export const fetchSingleUser = createAsyncThunk(
-  "user/fetchSingleUser",
+  "user/setUser",
   async (id: number) => {
     const res = await axios({
       method: "get",
@@ -62,30 +59,16 @@ export const deleteUser = createAsyncThunk(
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchSingleUser.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(fetchSingleUser.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.User = action.payload;
-    });
-    builder.addCase(fetchSingleUser.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-
-    builder.addCase(createUser.fulfilled, (state, action) => {
-      state.User = action.payload;
-    });
-
-    builder.addCase(deleteUser.fulfilled, (state) => {
-      state.User = null;
-    });
+  reducers: {
+    authorizeUser: (state) => {
+      state.isAuthorized = true;
+    },
+    unauthorizeUser: (state) => {
+      state.isAuthorized = true;
+    },
   },
 });
 
-// export const { getUser } = userSlice.actions;
+export const { authorizeUser, unauthorizeUser } = userSlice.actions;
 // export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

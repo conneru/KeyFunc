@@ -7,7 +7,7 @@ const target = env.ASPNETCORE_HTTPS_PORT
   ? env.ASPNETCORE_URLS.split(";")[0]
   : "http://localhost:5279";
 
-const context = ["/api"];
+const context = ["/api", "/hub"];
 
 const onError = (err, req, resp, target) => {
   console.error(`${err.message}`);
@@ -22,10 +22,10 @@ module.exports = function (app) {
     onError: onError,
     secure: false,
     // Uncomment this line to add support for proxying websockets
-    //ws: true,
-    headers: {
-      Connection: "Keep-Alive",
-    },
+    ws: true,
+    // headers: {
+    //   Connection: "Keep-Alive",
+    // },
   });
 
   app.use(appProxy);

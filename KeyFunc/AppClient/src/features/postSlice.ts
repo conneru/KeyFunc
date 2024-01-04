@@ -1,8 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
-import axios, { HttpStatusCode } from "axios";
+import { HttpStatusCode } from "axios";
 import { Post, User } from "../types";
+import { axiosInstance as axios } from "../axiosInstance";
 
 interface PostState {
   Posts: Post[] | null;
@@ -31,13 +31,16 @@ export const fetchSinglePost = createAsyncThunk(
 
 export const getFollowingPosts = createAsyncThunk(
   "post/getFollowingPosts",
-  async (user: User) => {
+  async (user: User, thunkAPI) => {
     const res = await axios.post("api/post/feed", user, {
       withCredentials: true,
     });
 
-    const posts: Post[] = await res.data;
+    const json = await res.data;
+    console.log(json);
 
+    const posts: Post[] = await res.data;
+    thunkAPI.dispatch(setPosts(posts));
     return posts;
   }
 );
@@ -75,34 +78,28 @@ export const deletePost = createAsyncThunk(
 export const postSlice = createSlice({
   name: "post",
   initialState,
-  reducers: {},
+  reducers: {
+    setPosts: (state, action) => {
+      state.isLoading = false;
+      if (state.Posts) {
+        return {
+          ...state,
+          Posts: [...state.Posts, ...action.payload],
+        };
+      }
+      return {
+        ...state,
+        Posts: action.payload,
+      };
+    },
+  },
   extraReducers: (builder) => {
-    builder.addCase(fetchSinglePost.pending, (state) => {
-      state.isLoading = true;
-    });
-    builder.addCase(fetchSinglePost.fulfilled, (state, action) => {
-      state.isLoading = false;
-      state.Posts?.push(action.payload);
-    });
-    builder.addCase(fetchSinglePost.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    });
-
-    builder.addCase(getFollowingPosts.fulfilled, (state, action) => {
-      state.Posts = action.payload;
-    });
-
-    // builder.addCase(createUser.fulfilled, (state, action) => {
-    //   state.User = action.payload;
-    // });
-
-    // builder.addCase(deleteUser.fulfilled, (state) => {
-    //   state.User = null;
+    // builder.addCase(fetchSinglePost.pending, (state) => {
+    //   state.isLoading = true;
     // });
   },
 });
 
-// export const { getUser } = userSlice.actions;
+export const { setPosts } = postSlice.actions;
 export const selectPosts = (state: RootState) => state.post;
 export default postSlice.reducer;
