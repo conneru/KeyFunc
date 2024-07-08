@@ -10,10 +10,7 @@ namespace KeyFunc.Hubs
 
         public int Count
         {
-            get
-            {
-                return _connections.Count;
-            }
+            get { return _connections.Count; }
         }
 
         public void Add(T key, string connectionId)
@@ -68,4 +65,3 @@ namespace KeyFunc.Hubs
         }
     }
 }
-

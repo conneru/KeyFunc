@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using KeyFunc.Repos;
-using KeyFunc.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using System.Reflection;
+using System.Threading.Tasks;
+using KeyFunc.Models;
+using KeyFunc.Repos;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,7 +17,6 @@ namespace KeyFunc.Controllers
     [Route("api/[controller]")]
     public class ChatController : ControllerBase
     {
-
         IChatRepository _chatRepository;
         IUserRepository _userRepository;
 
@@ -27,12 +26,11 @@ namespace KeyFunc.Controllers
             _userRepository = userRepository;
         }
 
-
         [HttpPost]
         [Route("all")]
-        public async Task<IEnumerable<Chat>?> GetChat([FromBody]User user)
+        public async Task<IEnumerable<Chat>?> GetChat([FromBody] User user)
         {
-           IEnumerable<Chat>? chat = await _chatRepository.GetChats(user);
+            IEnumerable<Chat>? chat = await _chatRepository.GetChats(user);
 
             return chat;
         }
@@ -40,13 +38,11 @@ namespace KeyFunc.Controllers
         [HttpPost]
         public async Task<Chat> CreateChat([FromBody] Chat chat)
         {
-
-            for (int i = 0; i < chat.Users.Count;i++) {
-
+            for (int i = 0; i < chat.Users.Count; i++)
+            {
                 User u = chat.Users[i];
                 User? newUser = await _userRepository.GetById(u.Id);
                 chat.Users[i] = newUser;
-
             }
 
             _chatRepository.Add(chat);
@@ -64,7 +60,6 @@ namespace KeyFunc.Controllers
         [HttpPut]
         public async Task<Chat> UpdateChat([FromBody] Chat chat)
         {
-
             Chat newChat = await _chatRepository.Update(chat.Id, chat);
 
             await _chatRepository.Save();
@@ -99,8 +94,5 @@ namespace KeyFunc.Controllers
             await _chatRepository.Save();
             return chat;
         }
-
-
     }
 }
-

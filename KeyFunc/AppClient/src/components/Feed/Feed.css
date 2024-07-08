@@ -1,12 +1,28 @@
+.feed-fix {
+  width: calc(100% - 335px);
+  margin-left: 335px;
+  height: 100dvh;
+}
+
 .feed-wrapper {
-  flex-direction: row;
+  position: relative;
+  flex-direction: column;
   display: flex;
   justify-content: center;
+  align-items: center;
+
   width: 100%;
+  overflow-y: auto;
+
+  height: 100%;
+
+  /* padding-bottom: 100px; */
 }
 .feed-container {
   max-width: 630px;
   width: 100%;
+  height: 100%;
+
   display: flex;
   justify-content: center;
   margin-top: 20px;
@@ -15,28 +31,25 @@
 .feed {
   max-width: 470px;
   width: 100%;
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
+  border-radius: 0px;
+
   flex-grow: 0;
   justify-content: center;
   align-self: auto;
-  position: static;
+  /* position: static; */
+
   flex-shrink: 0;
-  border-bottom-right-radius: 0px;
+
   align-items: center;
   display: flex;
   box-sizing: border-box;
   flex-direction: column;
   background-color: transparent;
-  border-bottom-left-radius: 0px;
   align-content: stretch;
-  overflow-x: visible;
-  overflow-y: visible;
-  /* flex-shrink: 0; */
 }
 
 @media screen and (max-width: 765px) {
-  .feed {
+  .feed-fix {
     padding-bottom: 50px;
   }
 }

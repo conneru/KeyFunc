@@ -12,43 +12,62 @@ import { logOut, refresh } from "../../features/authSlice";
 import Post from "../Post/Post";
 import "./Feed.css";
 import "../Navbar/NavBar.css";
-import { Spinner } from "react-bootstrap";
-import NavBar from "../Navbar/NavBar";
+import { Modal, Spinner } from "react-bootstrap";
+import PostModal from "../PostModal/PostModal";
 
 export default function Feed() {
   const dispatch = useAppDispatch();
 
   const [isRendered, setIsRendered] = useState(false);
   const userAuthExp = useAppSelector((state) => state.auth.authExp);
+  const [show, setShow] = useState(true);
 
-  useEffect(() => {
-    // const id: number = Math.floor(Math.random() * (15 - 13) + 13);
-    console.log("from feed");
-    dispatch(getFollowingPosts({ id: 13 }));
-  }, []);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   const posts: PostType[] | null = useAppSelector((state) => {
     return state.post.Posts;
   });
   const isLoading: boolean = useAppSelector((state) => state.post.isLoading);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(
+        getFollowingPosts({ id: 13, following: [], followers: [] })
+      );
+    };
+
+    if (!posts?.length) {
+      fetchData();
+    }
+  }, [dispatch]);
+
+  if (isLoading || !posts) {
+    // Return a loading spinner or placeholder while the posts are being fetched
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    );
+  }
+
   return (
-    <div className="feed-wrapper">
-      <div className="feed-container">
-        {isLoading ? (
-          <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        ) : (
-          <div className="feed">
-            {posts?.map((p: PostType) => {
-              return <Post key={p.id} {...p} />;
-            })}
-            <button onClick={() => dispatch(getFollowingPosts({ id: 14 }))}>
-              FUCKIT
-            </button>
+    <div className="feed-fix">
+      <div className="feed-wrapper">
+        <div className="feed-container">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div className="feed">
+              {posts?.map((p: PostType) => {
+                return <Post key={p.id} {...p} />;
+              })}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

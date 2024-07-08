@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using KeyFunc.DTO;
 using KeyFunc.Models;
 using KeyFunc.Repos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Cryptography;
 
 namespace KeyFunc.Controllers
 {
@@ -28,49 +29,50 @@ namespace KeyFunc.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody]User user)
+        public async Task<IActionResult> Login([FromBody] User user)
         {
             PasswordHasher<User> hasher = new();
             User? foundUser = await _userRepository.GetUserByEmail(user?.Email);
 
-            PasswordVerificationResult validPass = hasher.VerifyHashedPassword(foundUser, foundUser.Password, user.Password);
+            PasswordVerificationResult validPass = hasher.VerifyHashedPassword(
+                foundUser,
+                foundUser.Password,
+                user.Password
+            );
 
-            if (foundUser == null || validPass == PasswordVerificationResult.Failed) {
+            if (foundUser == null || validPass == PasswordVerificationResult.Failed)
+            {
                 return Unauthorized();
             }
 
+            if (foundUser.RefreshTokenExp < DateTime.Now)
+            {
+                foundUser.RefreshToken = Convert.ToString(Guid.NewGuid());
+                foundUser.RefreshTokenExp = DateTime.Now.AddDays(7);
 
-            foundUser.RefreshToken = Convert.ToString( Guid.NewGuid());
-            foundUser.RefreshTokenExp = DateTime.Now.AddDays(7);
+                foundUser = await _userRepository.Update(foundUser.Id, foundUser);
+                await _userRepository.Save();
+            }
 
-            User updatedUser = await _userRepository.Update(foundUser.Id, foundUser);
-            await _userRepository.Save();
-
-
-            JwtSecurityToken token = GenerateJwt(updatedUser);
+            JwtSecurityToken token = GenerateJwt(foundUser);
             HttpContext.Response.Cookies.Append(
                 "X-Access-Token",
                 new JwtSecurityTokenHandler().WriteToken(token),
-                new CookieOptions
-                {
-                    Expires = DateTime.Now.AddDays(7),
-                    HttpOnly = true
-                });
+                new CookieOptions { Expires = DateTime.Now.AddDays(7), HttpOnly = true }
+            );
             HttpContext.Response.Cookies.Append(
                 "X-Refresh-Token",
-                updatedUser.RefreshToken,
-                new CookieOptions
-                {
-                 Expires = DateTime.Now.AddDays(7),
-                 HttpOnly = true
-                });
-            return Ok(updatedUser);
+                foundUser.RefreshToken,
+                new CookieOptions { Expires = DateTime.Now.AddDays(7), HttpOnly = true }
+            );
+
+            UserDTO res = new UserDTO(foundUser);
+            return Ok(res);
         }
 
         [HttpGet("refresh")]
         public async Task<IActionResult> Refresh()
         {
-
             string accessToken = Request.Cookies["X-Access-Token"];
             string refreshToken = Request.Cookies["X-Refresh-Token"];
 
@@ -80,7 +82,11 @@ namespace KeyFunc.Controllers
 
             User user = await _userRepository.GetUserByEmail(email);
 
-            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExp < DateTime.Now)
+            if (
+                user is null
+                || user.RefreshToken != refreshToken
+                || user.RefreshTokenExp < DateTime.Now
+            )
             {
                 return Unauthorized();
             }
@@ -95,14 +101,19 @@ namespace KeyFunc.Controllers
                     Expires = DateTime.Now.AddDays(7),
                     HttpOnly = true,
                     Secure = true
-                });
+                }
+            );
 
-            return Ok(user);
+            UserDTO res = new UserDTO(user);
+
+            return Ok(res);
         }
 
         private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
-            var key = _config["JwtSettings:Key"] ?? throw new InvalidOperationException("Secret not configured");
+            var key =
+                _config["JwtSettings:Key"]
+                ?? throw new InvalidOperationException("Secret not configured");
 
             var validation = new TokenValidationParameters
             {
@@ -115,25 +126,28 @@ namespace KeyFunc.Controllers
             return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
         }
 
-
         private JwtSecurityToken GenerateJwt(User userInfo)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:Key"]));
+            var securityKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["JwtSettings:Key"])
+            );
 
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[] {
+            var claims = new[]
+            {
                 new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
                 new Claim(JwtRegisteredClaimNames.Name, userInfo.Email),
-
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
+            };
 
-            var token = new JwtSecurityToken(_config["JwtSettings:Issuer"],
-              _config["JwtSettings:Audience"],
-              claims,
-              expires: DateTime.Now.AddMinutes(1),
-              signingCredentials: credentials);
+            var token = new JwtSecurityToken(
+                _config["JwtSettings:Issuer"],
+                _config["JwtSettings:Audience"],
+                claims,
+                expires: DateTime.Now.AddMinutes(1),
+                signingCredentials: credentials
+            );
 
             return token;
         }
@@ -141,17 +155,11 @@ namespace KeyFunc.Controllers
         private static string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
-
             using var generator = RandomNumberGenerator.Create();
 
             generator.GetBytes(randomNumber);
 
             return Convert.ToBase64String(randomNumber);
         }
-
     }
-
-
-
 }
-

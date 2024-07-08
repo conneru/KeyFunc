@@ -1,25 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using KeyFunc.Models;
 using KeyFunc.Repos;
-using System.Text.Json;
-using System.Security.Cryptography;
+using KeyFunc.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Asn1.Pkcs;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=
 //
-public class test
-{
-    public string Id
-    {
-        get;set;
-    }
-}
 
 namespace KeyFunc.Controllers
 {
@@ -28,7 +22,7 @@ namespace KeyFunc.Controllers
     public class UserController : ControllerBase
     {
         IUserRepository _userRepository;
-       
+
         public UserController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
@@ -45,14 +39,13 @@ namespace KeyFunc.Controllers
             await _userRepository.Save();
 
             return user;
-
         }
 
         [HttpPut]
         public async Task<User> UpdateUser([FromBody] User user)
         {
-           User newUser = await _userRepository.Update(user.Id, user);
-           await _userRepository.Save();
+            User newUser = await _userRepository.Update(user.Id, user);
+            await _userRepository.Save();
 
             return newUser;
         }
@@ -60,7 +53,6 @@ namespace KeyFunc.Controllers
         [HttpDelete]
         public void DeleteUser([FromBody] User user)
         {
-            Console.WriteLine("hit");
             _userRepository.Delete(user);
             _userRepository.Save();
         }
@@ -69,63 +61,70 @@ namespace KeyFunc.Controllers
         [Route("all")]
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-
             IEnumerable<User?> allUsers = await _userRepository.GetAll();
-
 
             return allUsers.ToArray();
         }
 
         [HttpGet]
-        [Route("{Id}")]
-        public async Task<User?> GetSingleUser(int Id)
+        [Route("{username}")]
+        public async Task<UserProfileDTO?> GetSingleUser(string username)
         {
 
-            Console.WriteLine("Hit the route!");
-            User? user = await _userRepository.GetUserDetails(Id);
+            User? user = await _userRepository.GetUserByUsername(username);
 
-            return user;
+            return new UserProfileDTO(user);
         }
 
         [HttpPost]
-        [Route("follow/{id}")]
-        public async Task<User?> FollowUser(int id, [FromBody] User f)
+        [Route("follow/{username}")]
+        public async Task<UserProfileDTO?> FollowUser(string username, [FromBody] User user)
         {
-            //Console.WriteLine($"{user.Id} {user.Username}");
-            User? followee = await _userRepository.GetUserDetails(id);
 
-            User? follower = await _userRepository.GetUserDetails(f.Id);
+            User? followee = await _userRepository.GetUserByUsername(username);
+
+            User? follower = await _userRepository.GetUserDetails(user.Id);
 
             followee.Followers.Add(follower);
 
             await _userRepository.Save();
 
-            return followee;
-
+            return new UserProfileDTO(followee);
         }
 
         [HttpPost]
-        [Route("unfollow/{id}")]
-        public async Task<User?> UnfollowUser(int id, [FromBody] User f)
+        [Route("unfollow/{username}")]
+        public async Task<UserProfileDTO?> UnfollowUser(string username, [FromBody] User user)
         {
-            //Console.WriteLine($"{user.Id} {user.Username}");
-            User? followee = await _userRepository.GetUserDetails(id);
+            User? followee = await _userRepository.GetUserByUsername(username);
 
-            User? follower = await _userRepository.GetUserDetails(f.Id);
+            User? follower = await _userRepository.GetUserDetails(user.Id);
 
             followee.Followers.Remove(follower);
 
             await _userRepository.Save();
 
-            return follower;
-
+            return new UserProfileDTO(followee);
         }
 
+        [HttpPost]
+        [Route("search")]
+        public async Task<List<FollowUserDTO>?> SearchForUsers([FromBody] QueryDTO query)
+        {
+            List<FollowUserDTO> results = new();
+            List<User?> foundUsers = await _userRepository.GetMatchingUsers(query);
 
+          foreach(User u in foundUsers) {
+
+                results.Add(new FollowUserDTO(u));
+            }
+
+            return results;
+        }
 
         [HttpDelete]
         [Route("chat/{id}")]
-        public async Task<User> LeaveChat(int chatId,[FromBody] User user)
+        public async Task<User> LeaveChat(int chatId, [FromBody] User user)
         {
             User? u = await _userRepository.GetUserDetails(user.Id);
 
@@ -136,7 +135,5 @@ namespace KeyFunc.Controllers
 
             return u;
         }
-
     }
 }
-

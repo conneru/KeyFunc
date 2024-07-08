@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Authorization;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+﻿using System.Collections.Concurrent;
+using System.Text.Json;
+using System.Xml.Linq;
+using Google.Protobuf;
+using KeyFunc.DTO;
 using KeyFunc.Models;
 using KeyFunc.Repos;
-using System.Collections.Concurrent;
-using System.Xml.Linq;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace KeyFunc.Hubs
 {
-	public class ChatHub : Hub
-	{
+    public class ChatHub : Hub
+    {
         IUserRepository _userRepository;
         IMessageRepository _messageRepository;
 
-        private readonly static ConnectionMapping<string> _connections =
-        new ConnectionMapping<string>();
+        private static readonly ConnectionMapping<string> _connections =
+            new ConnectionMapping<string>();
 
         public ChatHub(IUserRepository userRepository, IMessageRepository messageRepository)
         {
@@ -22,33 +25,37 @@ namespace KeyFunc.Hubs
             _messageRepository = messageRepository;
         }
 
-        [Authorize]
-        public async Task NewMessage(string message, string groupName)
-        {
-            Console.WriteLine($"new message {message} {groupName}");
-            await Clients.Group(groupName).SendAsync("messageReceived",message, groupName);
+        //[Authorize]
+        //public async Task ViewedMessages(Chat chat,User user, string name)
+        //{
 
+        //    _messageRepository.
+        //    await Clients.Group(name).SendAsync("messagesViewed",message, groupName);
+
+        //}
+
+        [Authorize]
+        public async Task SendMessage(Message msg, User user, string group)
+        {
+            User u = await _userRepository.GetUserDetails(user.Id);
+            msg.CreatedAt = DateTime.Now;
+            msg.UsersWhoHaveRead = new List<User> { u };
+
+            Message newMsg = _messageRepository.Add(msg);
+            await _messageRepository.Save();
+
+            newMsg = await _messageRepository.getDetailedMessage(newMsg.Id);
+
+            await Clients.Group(group).SendAsync("messageReceived", new MessageDTO(newMsg));
         }
 
-        [Authorize]
-        public async Task SendMessage(string message)
-        {
-            Console.WriteLine($"SENDING");
-
-            Console.WriteLine(Clients.Group("nice@gmail.com").ToString());
-            await Clients.Group("nice@gmail.com").SendAsync("messageReceived", message);
-
-        }
-
-        public async override Task OnConnectedAsync()
+        public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
         }
 
-
         public override async Task OnDisconnectedAsync(Exception? e)
         {
-
             var name = Context.User.Identity.Name;
 
             Console.WriteLine($"{Context.ConnectionId} DISCONNECTED");
@@ -60,7 +67,6 @@ namespace KeyFunc.Hubs
 
             await base.OnDisconnectedAsync(e);
         }
-
 
         [Authorize]
         public async Task JoinGroup()
@@ -74,12 +80,8 @@ namespace KeyFunc.Hubs
 
             foreach (Chat c in user.Chats)
             {
-
                 await Groups.AddToGroupAsync(Context.ConnectionId, c.Name);
-
             }
         }
-
     }
 }
-

@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import { HttpStatusCode } from "axios";
-import { Post, User } from "../types";
+import { CreatePost, NewUser, Post, User } from "../types";
 import { axiosInstance as axios } from "../axiosInstance";
+import { url } from "inspector";
 
 interface PostState {
   Posts: Post[] | null;
@@ -32,37 +33,48 @@ export const fetchSinglePost = createAsyncThunk(
 export const getFollowingPosts = createAsyncThunk(
   "post/getFollowingPosts",
   async (user: User, thunkAPI) => {
-    const res = await axios.post("api/post/feed", user, {
-      withCredentials: true,
-    });
+    try {
+      const res = await axios.post("api/post/feed", user, {
+        withCredentials: true,
+      });
 
-    const json = await res.data;
-    console.log(json);
+      const json = await res.data;
+      console.log(json);
 
-    const posts: Post[] = await res.data;
-    thunkAPI.dispatch(setPosts(posts));
-    return posts;
+      const posts: Post[] = await res.data;
+      thunkAPI.dispatch(setPosts(posts));
+      return posts;
+    } catch (e) {
+      console.log(e);
+    }
   }
 );
 
 export const createPost = createAsyncThunk(
   "post/createPost",
-  async (post: Post) => {
-    const res = await axios.post("api/post", post);
+  async (post: CreatePost) => {
+    post.ContentTypes = post.FileList.map((f) => f.type);
+    console.log(post, "THIS IS TH EPSOT");
+    try {
+      const res = await axios.post("/api/post", post, {
+        withCredentials: true,
+      });
+      const urls: string[] = await res.data;
 
-    const createdPost: Post = await res.data;
-    return createdPost;
+      urls.forEach(async (url, idx) => {
+        console.log(url);
+        await axios.put(url, post.FileList[idx], {
+          headers: {
+            "Content-Type": post.FileList[idx].type,
+          },
+          withCredentials: false,
+        });
+      });
+    } catch (e) {
+      console.log(e);
+    }
   }
 );
-
-// export const updateUser = createAsyncThunk(
-//   "user/updateUser",
-//   async (user: User) => {
-//     console.log(user.Username);
-//     await axios.put(`api/user`, user);
-//     return HttpStatusCode.Accepted;
-//   }
-// );
 
 export const deletePost = createAsyncThunk(
   "post/deletePost",
@@ -94,9 +106,9 @@ export const postSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // builder.addCase(fetchSinglePost.pending, (state) => {
-    //   state.isLoading = true;
-    // });
+    builder.addCase(getFollowingPosts.rejected, (state, action) => {
+      console.log(action.payload);
+    });
   },
 });
 

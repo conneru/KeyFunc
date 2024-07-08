@@ -4,6 +4,7 @@ using KeyFunc.Repos;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Amazon.S3;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using KeyFunc.Hubs;
@@ -74,6 +75,7 @@ builder.Services.AddTransient<IImageRepository, ImageRespository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<IPostRepository, PostRepository>();
 
+//builder.Services.AddAWSService<IAmazonS3>();
 
 var app = builder.Build();
 

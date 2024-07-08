@@ -40,8 +40,14 @@ namespace KeyFunc.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -85,9 +91,7 @@ namespace KeyFunc.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 12, 23, 16, 53, 45, 723, DateTimeKind.Local).AddTicks(820));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<bool?>("Edited")
                         .HasColumnType("tinyint(1)");
@@ -125,15 +129,37 @@ namespace KeyFunc.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("createdAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 12, 23, 16, 53, 45, 722, DateTimeKind.Local).AddTicks(9720));
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("KeyFunc.Models.Tag", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Left")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Top")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("KeyFunc.Models.User", b =>
@@ -146,9 +172,7 @@ namespace KeyFunc.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime?>("JoinedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValue(new DateTime(2023, 12, 23, 16, 53, 45, 722, DateTimeKind.Local).AddTicks(6860));
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
@@ -168,6 +192,21 @@ namespace KeyFunc.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("MessageUser", b =>
+                {
+                    b.Property<int>("MessagesReadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersWhoHaveReadId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MessagesReadId", "UsersWhoHaveReadId");
+
+                    b.HasIndex("UsersWhoHaveReadId");
+
+                    b.ToTable("ReadMessages", (string)null);
                 });
 
             modelBuilder.Entity("UserUser", b =>
@@ -243,6 +282,31 @@ namespace KeyFunc.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("KeyFunc.Models.Tag", b =>
+                {
+                    b.HasOne("KeyFunc.Models.Image", "Image")
+                        .WithMany("Tags")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("MessageUser", b =>
+                {
+                    b.HasOne("KeyFunc.Models.Message", null)
+                        .WithMany()
+                        .HasForeignKey("MessagesReadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KeyFunc.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersWhoHaveReadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("UserUser", b =>
                 {
                     b.HasOne("KeyFunc.Models.User", null)
@@ -261,6 +325,11 @@ namespace KeyFunc.Migrations
             modelBuilder.Entity("KeyFunc.Models.Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("KeyFunc.Models.Image", b =>
+                {
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("KeyFunc.Models.Post", b =>

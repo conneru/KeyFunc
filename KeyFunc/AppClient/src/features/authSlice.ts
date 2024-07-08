@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { authorizeUser } from "./userSlice";
 import { axiosInstance as axios } from "../axiosInstance";
-import { User } from "../types";
+import { User, NewUser } from "../types";
 import { getUserChats, setChats } from "./chatSlice";
+import { RootState } from "../store";
 
 interface AuthState {
   authExp: number | null;
@@ -14,13 +15,13 @@ interface AuthState {
 const initialState: AuthState = {
   authExp: null,
   User: null,
-  isLoading: false,
+  isLoading: true,
   error: undefined,
 };
 
 export const login = createAsyncThunk(
   "auth/Login",
-  async (user: User, thunkAPI) => {
+  async (user: NewUser, thunkAPI) => {
     const res = await axios({
       method: "post",
       url: `api/auth/login`,
@@ -43,17 +44,23 @@ export const login = createAsyncThunk(
 export const refresh = createAsyncThunk("auth/Refresh", async (_, thunkAPI) => {
   const res = await axios({
     method: "get",
-    url: `api/auth/refresh`,
+    url: `/api/auth/refresh`,
     withCredentials: true,
   });
 
+  const state = (await thunkAPI.getState()) as RootState;
+
+  const chatState = state.chat.Chats;
+
   const user: User = await res.data;
-  console.log("this is user data: ", user);
+  // console.log(user);
 
   switch (res.status) {
     case 200:
       thunkAPI.dispatch(authorizeUser());
-      thunkAPI.dispatch(setChats(user.chats));
+      if (!chatState?.length) {
+        thunkAPI.dispatch(setChats(user.chats));
+      }
       thunkAPI.dispatch(setUser(user));
       return 200;
     default:

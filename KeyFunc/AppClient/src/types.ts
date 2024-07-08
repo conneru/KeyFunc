@@ -1,6 +1,8 @@
 export interface Chat {
   id?: number | null;
   name?: string | null;
+  image?: string | null;
+  type?: number | null;
   messages?: Message[] | null;
   users?: User[] | null;
 }
@@ -12,6 +14,7 @@ export interface Image {
   url?: string;
   user?: User | null;
   post?: Post | null;
+  tags?: Tag[] | null;
 }
 
 export interface Message {
@@ -25,16 +28,22 @@ export interface Message {
   chat?: Chat | null;
   user?: User | null;
   post?: Post | null;
+  usersWhoHaveRead: number[];
+}
+
+interface FollowDictionary {
+  [key: number]: User;
 }
 
 export interface User {
-  id?: number | null;
+  id: number;
   username?: string | null;
   email?: string | null;
   joinedOn?: Date | null;
   profilePic?: string | null;
-  following?: User[] | null;
-  followers?: User[] | null;
+  following: FollowDictionary;
+  followers: FollowDictionary;
+  posts?: Post[];
   chats?: Chat[] | null;
 }
 
@@ -53,6 +62,27 @@ export interface Post {
   images: Image[];
   user?: User | null;
   createdAt: string;
+  likes?: number | null;
+}
+
+export interface TimeDifference {
+  formattedString: string;
+  diffCode: string;
+}
+export type Tag = {
+  id: string;
+  imageId: number;
+  username: string;
+  top: string;
+  left: string;
+};
+
+export interface CreatePost {
+  UserId?: number;
+  Description?: string;
+  ContentTypes?: string[];
+  FileList: File[];
+  Tags?: Tag[][];
 }
 
 export interface Connect {

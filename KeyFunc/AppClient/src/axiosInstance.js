@@ -18,14 +18,15 @@ export const setupAxiosInstance = (store) => {
       if (
         error.response.status === 401 &&
         !originalRequest._retry &&
-        originalRequest.url !== "api/auth/refresh"
+        originalRequest.url !== "/api/auth/refresh"
       ) {
         console.log(originalRequest.url);
         originalRequest._retry = true;
 
         const status = await store.dispatch(refresh());
 
-        if (status === 200) {
+        if (status.payload === 200) {
+          console.log(originalRequest.url, originalRequest.config);
           return axiosInstance(originalRequest);
         }
       }
