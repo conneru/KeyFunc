@@ -130,9 +130,6 @@ namespace KeyFunc.Controllers
                 RegionEndpoint = region // Replace YOUR_REGION with the appropriate AWS region (e.g., RegionEndpoint.USWest2)
             };
 
-            string accessKey = "AKIATOCPJ6GSSK4W4U4W";
-            string secretKey = "c1zRxwYmFwJa3qdV/LBmkFcB8HyuRXikMa4cO8eJ";
-
 
             var credentials = new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey);
 
