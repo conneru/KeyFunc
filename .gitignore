@@ -15,6 +15,16 @@ test-results/
 *.dmg
 *.app
 
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.config/
+.node_modules
+
 # content below from: https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
 # General
 .DS_Store
